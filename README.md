@@ -14,13 +14,13 @@ O sistema permite registrar operações de estoque e acompanhar o impacto dessas
 ├── Backend
 │   ├── app
 │   ├── routes
-│   ├── Docker
+│   ├── Dockerfile
 │   ├── .env.example
 │   └── ...
 │
 ├── Frontend
 │   ├── src
-│   ├── Docker
+│   ├── Dockerfile
 │   ├── .env.example
 │   └── ...
 │
