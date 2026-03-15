@@ -17,9 +17,7 @@ RUN docker-php-ext-install \
     bcmath \
     gd
 
-# Redis extension for caching
-RUN pecl install redis \
-    && docker-php-ext-enable redis
+RUN pecl install redis && docker-php-ext-enable redis
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -27,10 +25,12 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www
 
+ENV PORT=8000
+
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
