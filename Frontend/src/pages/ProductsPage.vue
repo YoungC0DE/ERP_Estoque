@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 import Card from "primevue/card";
 import InputText from "primevue/inputtext";
@@ -10,22 +10,23 @@ import Column from "primevue/column";
 
 import ApiService, { PRODUCTS_ENDPOINT } from "@/services/ApiService.js";
 import ToastService from "@/services/ToastService.js";
-import { validateProduct, isFormValid, handleApiErrors } from "@/services/ValidationService.js";
+import {
+  validateProduct,
+  isFormValid,
+  handleApiErrors,
+} from "@/services/ValidationService.js";
 
 const Toast = ToastService();
 
 const products = ref([]);
 const search = ref("");
 
-const filteredProducts = computed(() => {
-  const q = search.value.trim().toLowerCase();
-  if (!q) return products.value;
-
-  return products.value.filter((p) => {
-    const value = `${p.id} ${p.nome} ${p.custo_medio} ${p.preco_venda} ${p.estoque}`.toLowerCase();
-    return value.includes(q);
-  });
-});
+const computed = {
+  isFormEmpty: () =>
+    !form.value.nome ||
+    form.value.preco_venda === null ||
+    form.value.preco_venda === undefined,
+};
 
 const form = ref({
   nome: "",
@@ -34,19 +35,20 @@ const form = ref({
 
 const loading = ref(false);
 
-// Verifica se o botão deve estar desabilitado (campos vazios)
-const isFormEmpty = computed(() => {
-  return !form.value.nome || form.value.preco_venda === null || form.value.preco_venda === undefined;
-});
-
-const loadProducts = async () => {
+const loadProducts = async (searchQuery = "") => {
   try {
-    const response = await ApiService.get(PRODUCTS_ENDPOINT);
+    const config = searchQuery ? { params: { search: searchQuery } } : {};
+    const response = await ApiService.get(PRODUCTS_ENDPOINT, config);
     products.value = response.data.data ?? response.data;
   } catch (error) {
     Toast.error("Erro ao carregar produtos");
   }
 };
+
+// Watcher para busca com debounce
+watch(search, async (newValue) => {
+    await loadProducts(newValue.trim());
+});
 
 const createProduct = async () => {
   // Validar antes de enviar
@@ -113,7 +115,7 @@ onMounted(() => {
               label="Cadastrar"
               icon="pi pi-save"
               :loading="loading"
-              :disabled="isFormEmpty"
+              :disabled="computed.isFormEmpty()"
               @click="createProduct"
             />
           </div>
@@ -127,10 +129,12 @@ onMounted(() => {
         <template #title> Produtos </template>
 
         <template #content>
-          <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3 mb-4">
+          <div
+            class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3 mb-4"
+          >
             <InputText
               v-model="search"
-              placeholder="Pesquisar..."
+              placeholder="Digite para buscar..."
               class="w-full md:w-6"
             />
             <Button
@@ -142,7 +146,7 @@ onMounted(() => {
           </div>
 
           <DataTable
-            :value="filteredProducts"
+            :value="products"
             paginator
             :rows="10"
             responsiveLayout="scroll"
@@ -157,7 +161,9 @@ onMounted(() => {
                   <span class="font-semibold">Custo Médio</span>
                   <i
                     class="pi pi-question-circle text-sm"
-                    v-tooltip.top="`Cálculo utilizado: (( estoque atual x custo médio atual ) + ( quantidade compra x custo unitário )) / novo estoque`"
+                    v-tooltip.top="
+                      `Cálculo utilizado: (( estoque atual x custo médio atual ) + ( quantidade compra x custo unitário )) / novo estoque`
+                    "
                   />
                 </div>
               </template>

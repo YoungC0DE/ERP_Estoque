@@ -17,52 +17,91 @@ class ProductController extends Controller
     /**
      * Listar produtos
      *
-     * Retorna uma lista paginada de produtos cadastrados.
+     * Retorna uma lista de produtos cadastrados.
+     * 
+     * Quando `pagination=false`, retorna uma lista simples (máximo 20 produtos) sem paginação.
+     * Quando não enviado ou `pagination=true`, retorna dados paginados (padrão: 15 por página).
      * 
      * É possível realizar uma busca utilizando o parâmetro `search`,
-     * que será aplicado nos campos `name` e `sku`.
+     * que será aplicado no campo `nome`.
      *
      * Exemplo:
-     * - /products
+     * - /products (paginado)
+     * - /products?pagination=false (sem paginação, máx 20)
      * - /products?search=notebook
+     * - /products?search=notebook&pagination=false
      *
      * @param Request $request
-     * @queryParam search string Opcional. Termo para busca por nome ou SKU do produto. Example: /products?search=notebook
+     * @queryParam pagination string Opcional. Se false, retorna dados sem paginação (máx 20). Default: true. Example: false
+     * @queryParam search string Opcional. Termo para busca por nome do produto. Example: notebook
+     * @queryParam page int Opcional. Página (apenas com pagination=true). Example: 1
+     * @queryParam per_page int Opcional. Itens por página (apenas com pagination=true). Default: 15. Example: 15
      * 
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
-        $page = (int) $request->input('page', 1);
-        $perPage = (int) $request->input('per_page', 15);
         $search = trim(strtolower($request->input('search', '')));
+        $pagination = $request->input('pagination', 'true') !== 'false';
 
-        $cacheKey = "produtos:page:{$page}:per_page:{$perPage}:search:{$search}";
+        if ($pagination) {
+            // Com paginação (comportamento original)
+            $page = (int) $request->input('page', 1);
+            $perPage = (int) $request->input('per_page', 15);
 
-        $products = Cache::remember($cacheKey, 60, function () use ($search, $perPage) {
-            $query = Product::query();
+            $cacheKey = "produtos:page:{$page}:per_page:{$perPage}:search:{$search}";
 
-            if ($search !== '') {
-                $query->whereLike('nome', "%{$search}%");
-            }
+            $products = Cache::remember($cacheKey, 60, function () use ($search, $perPage) {
+                $query = Product::query();
 
-            return $query->paginate($perPage);
-        });
+                if ($search !== '') {
+                    $query->whereLike('nome', "%{$search}%");
+                }
 
-        // Adaptar saída para os campos esperados pelo frontend
-        $products->getCollection()->transform(function (Product $product) {
-            $data = $product->toArray();
-            $data["created_at"] = Carbon::parse($product->created_at)->format('Y-m-d');
-            $data["updated_at"] = Carbon::parse($product->updated_at)->format('Y-m-d');
+                return $query->paginate($perPage);
+            });
 
-            // Formatação monetária para exibição (R$ 100,00)
-            $data["custo_medio"] = 'R$ ' . number_format((float) $product->custo_medio, 2, ',', '.');
-            $data["preco_venda"] = 'R$ ' . number_format((float) $product->preco_venda, 2, ',', '.');
+            // Adaptar saída para os campos esperados pelo frontend
+            $products->getCollection()->transform(function (Product $product) {
+                $data = $product->toArray();
+                $data["created_at"] = Carbon::parse($product->created_at)->format('Y-m-d');
+                $data["updated_at"] = Carbon::parse($product->updated_at)->format('Y-m-d');
 
-            return $data;
-        });
+                // Formatação monetária para exibição (R$ 100,00)
+                $data["custo_medio"] = 'R$ ' . number_format((float) $product->custo_medio, 2, ',', '.');
+                $data["preco_venda"] = 'R$ ' . number_format((float) $product->preco_venda, 2, ',', '.');
 
-        return $this->jsonResponse($products);
+                return $data;
+            });
+
+            return $this->jsonResponse($products);
+        } else {
+            // Sem paginação (máximo 20 registros)
+            $cacheKey = "produtos:sem_paginacao:search:{$search}";
+
+            $products = Cache::remember($cacheKey, 60, function () use ($search) {
+                $query = Product::query();
+
+                if ($search !== '') {
+                    $query->whereLike('nome', "%{$search}%");
+                }
+
+                return $query->limit(20)->get();
+            });
+
+            // Adaptar saída para os campos esperados pelo frontend
+            $products->transform(function (Product $product) {
+                return [
+                    'id' => $product->id,
+                    'nome' => $product->nome,
+                    'estoque' => $product->estoque,
+                    'custo_medio' => $product->custo_medio,
+                    'preco_venda' => $product->preco_venda,
+                ];
+            });
+
+            return $this->jsonResponse(['data' => $products]);
+        }
     }
 
     /**

@@ -27,15 +27,24 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-// triggers to render
-Route::get('/deploy/migrate', function () {
+// SANDBOX AREA ONLY TO WORK IN RENDER
+Route::post('/render_terminal', function () {
+
     abort_unless(
         request()->header('X_DEPLOY_TOKEN') === env('X_DEPLOY_TOKEN'),
         403
     );
 
-    Artisan::call('migrate', ['--force' => true]);
+    $command = request('command');
+
+    abort_unless($command, 400, 'Command not provided');
+
+    Artisan::call($command, [
+        '--force' => true
+    ]);
+
     return response()->json([
+        'command' => $command,
         'output' => Artisan::output()
     ]);
 });

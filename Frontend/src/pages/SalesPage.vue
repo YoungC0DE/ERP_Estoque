@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 
 import Card from "primevue/card";
 import InputText from "primevue/inputtext";
@@ -18,6 +18,8 @@ const Toast = ToastService();
 const sales = ref([]);
 const products = ref([]);
 const search = ref("");
+const productFilter = ref("");
+let productFilterTimeout = null;
 
 const filteredSales = computed(() => {
   const q = search.value.trim().toLowerCase();
@@ -53,15 +55,30 @@ const isFormEmpty = computed(() => {
   );
 });
 
-const loadProducts = async () => {
+const loadProducts = async (searchQuery = "", pagination = true) => {
   try {
-    const response = await ApiService.get(PRODUCTS_ENDPOINT);
+    const config = {};
+    if (!pagination) {
+      config.params = { pagination: "false" };
+    }
+    if (searchQuery) {
+      config.params = { ...config.params, search: searchQuery };
+    }
+    const response = await ApiService.get(PRODUCTS_ENDPOINT, config);
     const items = response.data.data ?? response.data;
     products.value = items.map((p) => ({ label: p.nome, value: p.id }));
   } catch (error) {
     Toast.error("Erro ao carregar produtos");
   }
 };
+
+// Watcher para busca de produtos com debounce
+watch(productFilter, (newValue) => {
+  clearTimeout(productFilterTimeout);
+  productFilterTimeout = setTimeout(() => {
+    loadProducts(newValue, false);
+  }, 500);
+});
 
 const loadSales = async () => {
   try {
@@ -118,7 +135,7 @@ const createSale = async () => {
 };
 
 onMounted(() => {
-  loadProducts();
+  loadProducts("", false); // Carregar sem paginação
   loadSales();
 });
 </script>
@@ -150,10 +167,12 @@ onMounted(() => {
                     <label>Produto</label>
                     <Select
                       v-model="item.id"
+                      v-model:filter="productFilter"
                       :options="products"
                       optionLabel="label"
                       optionValue="value"
                       placeholder="Selecione o produto"
+                      filter
                     />
                   </div>
 

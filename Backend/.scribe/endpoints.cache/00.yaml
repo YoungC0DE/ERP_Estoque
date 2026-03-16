@@ -56,14 +56,19 @@ endpoints:
       subgroupDescription: ''
       title: 'Listar produtos'
       description: |-
-        Retorna uma lista paginada de produtos cadastrados.
+        Retorna uma lista de produtos cadastrados.
+
+        Quando `pagination=false`, retorna uma lista simples (máximo 20 produtos) sem paginação.
+        Quando não enviado ou `pagination=true`, retorna dados paginados (padrão: 15 por página).
 
         É possível realizar uma busca utilizando o parâmetro `search`,
-        que será aplicado nos campos `name` e `sku`.
+        que será aplicado no campo `nome`.
 
         Exemplo:
-        - /products
+        - /products (paginado)
+        - /products?pagination=false (sem paginação, máx 20)
         - /products?search=notebook
+        - /products?search=notebook&pagination=false
       authenticated: false
       deprecated: false
     headers:
@@ -72,30 +77,63 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      search:
+      pagination:
         custom: []
-        name: search
-        description: 'Opcional. Termo para busca por nome ou SKU do produto.'
+        name: pagination
+        description: 'Opcional. Se false, retorna dados sem paginação (máx 20). Default: true.'
         required: false
-        example: '/products?search=notebook'
+        example: 'false'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Opcional. Termo para busca por nome do produto.'
+        required: false
+        example: notebook
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Opcional. Página (apenas com pagination=true).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Opcional. Itens por página (apenas com pagination=true). Default: 15.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
     cleanQueryParameters:
-      search: '/products?search=notebook'
+      pagination: 'false'
+      search: notebook
+      page: 1
+      per_page: 15
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
     responses:
       -
         custom: []
-        status: 500
-        content: |-
-          {
-              "message": "Server Error"
-          }
+        status: 200
+        content: '{"data":[]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -211,11 +249,8 @@ endpoints:
     responses:
       -
         custom: []
-        status: 500
-        content: |-
-          {
-              "message": "Server Error"
-          }
+        status: 404
+        content: '{"error":"Product not found"}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -400,11 +435,8 @@ endpoints:
     responses:
       -
         custom: []
-        status: 500
-        content: |-
-          {
-              "message": "Server Error"
-          }
+        status: 200
+        content: '{"current_page":1,"data":[],"first_page_url":"http:\/\/localhost\/api\/v1\/compras?page=1","from":null,"last_page":1,"last_page_url":"http:\/\/localhost\/api\/v1\/compras?page=1","links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost\/api\/v1\/compras?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"next_page_url":null,"path":"http:\/\/localhost\/api\/v1\/compras","per_page":15,"prev_page_url":null,"to":null,"total":0}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -581,11 +613,8 @@ endpoints:
     responses:
       -
         custom: []
-        status: 500
-        content: |-
-          {
-              "message": "Server Error"
-          }
+        status: 200
+        content: '{"current_page":1,"data":[],"first_page_url":"http:\/\/localhost\/api\/v1\/vendas?page=1","from":null,"last_page":1,"last_page_url":"http:\/\/localhost\/api\/v1\/vendas?page=1","links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost\/api\/v1\/vendas?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"next_page_url":null,"path":"http:\/\/localhost\/api\/v1\/vendas","per_page":15,"prev_page_url":null,"to":null,"total":0}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -709,6 +738,49 @@ endpoints:
         - architecto
     fileParameters: []
     responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/deploy/migrate
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+              "message": ""
+          }
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
     responseFields: []
     auth: []
     controller: null
