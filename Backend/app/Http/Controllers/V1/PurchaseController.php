@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache;
 
 class PurchaseController extends Controller
 {
@@ -157,6 +158,8 @@ class PurchaseController extends Controller
             ]);
 
             DB::commit();
+
+            Cache::flush();
 
             return $this->jsonResponse(
                 $purchase->with('items.product')->find($purchase->id),

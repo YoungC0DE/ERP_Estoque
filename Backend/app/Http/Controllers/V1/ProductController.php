@@ -75,33 +75,32 @@ class ProductController extends Controller
             });
 
             return $this->jsonResponse($products);
-        } else {
-            // Sem paginação (máximo 20 registros)
-            $cacheKey = "produtos:sem_paginacao:search:{$search}";
-
-            $products = Cache::remember($cacheKey, 60, function () use ($search) {
-                $query = Product::query();
-
-                if ($search !== '') {
-                    $query->whereLike('nome', "%{$search}%");
-                }
-
-                return $query->limit(20)->get();
-            });
-
-            // Adaptar saída para os campos esperados pelo frontend
-            $products->transform(function (Product $product) {
-                return [
-                    'id' => $product->id,
-                    'nome' => $product->nome,
-                    'estoque' => $product->estoque,
-                    'custo_medio' => $product->custo_medio,
-                    'preco_venda' => $product->preco_venda,
-                ];
-            });
-
-            return $this->jsonResponse(['data' => $products]);
         }
+
+        $cacheKey = "produtos:sem_paginacao:search:{$search}";
+
+        $products = Cache::remember($cacheKey, 60, function () use ($search) {
+            $query = Product::query();
+
+            if ($search !== '') {
+                $query->whereLike('nome', "%{$search}%");
+            }
+
+            return $query->limit(20)->get();
+        });
+
+        // Adaptar saída para os campos esperados pelo frontend
+        $products->transform(function (Product $product) {
+            return [
+                'id' => $product->id,
+                'nome' => $product->nome,
+                'estoque' => $product->estoque,
+                'custo_medio' => $product->custo_medio,
+                'preco_venda' => $product->preco_venda,
+            ];
+        });
+
+        return $this->jsonResponse(['data' => $products]);
     }
 
     /**

@@ -37,7 +37,9 @@ const loading = ref(false);
 
 const loadProducts = async (searchQuery = "") => {
   try {
-    const config = searchQuery ? { params: { search: searchQuery } } : {};
+    // Quando chamado a partir de eventos de clique, o primeiro parâmetro pode ser o próprio evento.
+    const query = typeof searchQuery === "string" ? searchQuery : "";
+    const config = query ? { params: { search: query } } : {};
     const response = await ApiService.get(PRODUCTS_ENDPOINT, config);
     products.value = response.data.data ?? response.data;
   } catch (error) {

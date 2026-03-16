@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class SaleController extends Controller
 {
@@ -160,6 +161,8 @@ class SaleController extends Controller
                 'valor_total' => $total
             ]);
             DB::commit();
+
+            Cache::flush();
 
             return $this->jsonResponse([
                 'sale' => $sale->load('items.product'),
