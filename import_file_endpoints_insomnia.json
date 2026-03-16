@@ -5,49 +5,58 @@
   "__export_source": "chatgpt",
   "resources": [
     {
-      "_id": "wrk_api_erp",
+      "_id": "wrk_estoque_erp",
       "_type": "workspace",
-      "name": "estoque-erp/v1",
-      "description": "API de produtos, compras e vendas",
+      "name": "estoque_erp",
       "scope": "collection"
     },
+
     {
       "_id": "env_base",
       "_type": "environment",
-      "parentId": "wrk_api_erp",
+      "parentId": "wrk_estoque_erp",
       "name": "Base Environment",
       "data": {
-        "base_url": "http://localhost:8000/api/v1"
+        "url_base_local": "http://localhost:8000/api/v1",
+        "url_base_hml": "https://teste-tecnico-fonte-ninja.onrender.com/api/v1"
       }
     },
+
     {
-      "_id": "fld_root",
+      "_id": "fld_local",
       "_type": "request_group",
-      "parentId": "wrk_api_erp",
-      "name": "estoque-erp/v1"
+      "parentId": "wrk_estoque_erp",
+      "name": "local"
     },
     {
-      "_id": "fld_produtos",
+      "_id": "fld_local_v1",
       "_type": "request_group",
-      "parentId": "fld_root",
-      "name": "Produtos"
+      "parentId": "fld_local",
+      "name": "v1"
+    },
+
+    {
+      "_id": "fld_local_produtos",
+      "_type": "request_group",
+      "parentId": "fld_local_v1",
+      "name": "produtos"
     },
     {
-      "_id": "req_produtos_list",
+      "_id": "req_local_produtos_list",
       "_type": "request",
-      "parentId": "fld_produtos",
+      "parentId": "fld_local_produtos",
       "name": "Listar Produtos",
       "method": "GET",
-      "url": "{{ base_url }}/produtos",
+      "url": "{{ url_base_local }}/produtos",
       "headers": [{ "name": "Accept", "value": "application/json" }]
     },
     {
-      "_id": "req_produtos_save",
+      "_id": "req_local_produtos_save",
       "_type": "request",
-      "parentId": "fld_produtos",
+      "parentId": "fld_local_produtos",
       "name": "Cadastrar Produto",
       "method": "POST",
-      "url": "{{ base_url }}/produtos",
+      "url": "{{ url_base_local }}/produtos",
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
         { "name": "Accept", "value": "application/json" }
@@ -57,66 +66,113 @@
         "text": "{\n  \"nome\": \"Mouse Gamer\",\n  \"preco_venda\": 25.00\n}"
       }
     },
+
     {
-      "_id": "fld_compras",
+      "_id": "fld_local_compras",
       "_type": "request_group",
-      "parentId": "fld_root",
-      "name": "Compras"
+      "parentId": "fld_local_v1",
+      "name": "compras"
     },
     {
-      "_id": "req_compras_list",
+      "_id": "req_local_compras_list",
       "_type": "request",
-      "parentId": "fld_compras",
+      "parentId": "fld_local_compras",
       "name": "Listar Compras",
       "method": "GET",
-      "url": "{{ base_url }}/compras",
+      "url": "{{ url_base_local }}/compras",
       "headers": [{ "name": "Accept", "value": "application/json" }]
     },
     {
-      "_id": "req_compras_save",
+      "_id": "req_local_compras_save",
       "_type": "request",
-      "parentId": "fld_compras",
+      "parentId": "fld_local_compras",
       "name": "Registrar Compra",
       "method": "POST",
-      "url": "{{ base_url }}/compras",
+      "url": "{{ url_base_local }}/compras",
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
         { "name": "Accept", "value": "application/json" }
       ],
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"fornecedor\": \"Fornecedor X\",\n  \"produtos\": [\n    {\n      \"id\": 1,\n      \"quantidade\": 10,\n      \"preco_unitario\": 5.50\n    }\n  ]\n}"
+        "text": "{\n  \"fornecedor\": \"Fornecedor X\",\n  \"produtos\": [{\n    \"id\": 1,\n    \"quantidade\": 10,\n    \"preco_unitario\": 5.50\n  }]\n}"
       }
     },
+
     {
-      "_id": "fld_vendas",
+      "_id": "fld_local_vendas",
       "_type": "request_group",
-      "parentId": "fld_root",
-      "name": "Vendas"
+      "parentId": "fld_local_v1",
+      "name": "vendas"
     },
     {
-      "_id": "req_vendas_list",
+      "_id": "req_local_vendas_list",
       "_type": "request",
-      "parentId": "fld_vendas",
+      "parentId": "fld_local_vendas",
       "name": "Listar Vendas",
       "method": "GET",
-      "url": "{{ base_url }}/vendas",
+      "url": "{{ url_base_local }}/vendas",
       "headers": [{ "name": "Accept", "value": "application/json" }]
     },
     {
-      "_id": "req_vendas_save",
+      "_id": "req_local_vendas_save",
       "_type": "request",
-      "parentId": "fld_vendas",
+      "parentId": "fld_local_vendas",
       "name": "Registrar Venda",
       "method": "POST",
-      "url": "{{ base_url }}/vendas",
+      "url": "{{ url_base_local }}/vendas",
       "headers": [
         { "name": "Content-Type", "value": "application/json" },
         { "name": "Accept", "value": "application/json" }
       ],
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"cliente\": \"Fulano da Silva\",\n  \"produtos\": [\n    {\n      \"id\": 1,\n      \"quantidade\": 2,\n      \"preco_unitario\": 20.00\n    }\n  ]\n}"
+        "text": "{\n  \"cliente\": \"Fulano da Silva\",\n  \"produtos\": [{\n    \"id\": 1,\n    \"quantidade\": 2,\n    \"preco_unitario\": 20.00\n  }]\n}"
+      }
+    },
+
+    {
+      "_id": "fld_hml",
+      "_type": "request_group",
+      "parentId": "wrk_estoque_erp",
+      "name": "hml"
+    },
+    {
+      "_id": "fld_hml_v1",
+      "_type": "request_group",
+      "parentId": "fld_hml",
+      "name": "v1"
+    },
+
+    {
+      "_id": "fld_hml_produtos",
+      "_type": "request_group",
+      "parentId": "fld_hml_v1",
+      "name": "produtos"
+    },
+    {
+      "_id": "req_hml_produtos_list",
+      "_type": "request",
+      "parentId": "fld_hml_produtos",
+      "name": "Listar Produtos",
+      "method": "GET",
+      "url": "{{ url_base_hml }}/produtos",
+      "headers": [{ "name": "Accept", "value": "application/json" }]
+    },
+    {
+      "_id": "req_hml_produtos_save",
+      "_type": "request",
+      "parentId": "fld_hml_produtos",
+      "name": "Cadastrar Produto",
+      "method": "POST",
+      "url": "{{ url_base_hml }}/produtos",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Mouse Gamer\",\n  \"preco_venda\": 25.00\n}"
       }
     }
   ]

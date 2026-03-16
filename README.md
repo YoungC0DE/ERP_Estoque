@@ -8,8 +8,25 @@ O sistema permite registrar operações de estoque e acompanhar o impacto dessas
 
 ---
 
+# 🌐 Acesso ao Projeto (Ambiente de Homologação)
+
+O projeto também está disponível online para testes:
+
+Frontend  
+https://teste-tecnico-fonte-ninja.vercel.app/
+
+API  
+https://teste-tecnico-fonte-ninja.onrender.com
+
+Documentação da API  
+https://teste-tecnico-fonte-ninja.onrender.com/docs
+
+> ⚠️ O primeiro acesso à API pode levar alguns segundos, pois o Render hiberna serviços gratuitos após período de inatividade.
+
+---
+
 # 📦 Estrutura do Projeto
-```
+
 .
 ├── Backend
 │   ├── app
@@ -27,7 +44,6 @@ O sistema permite registrar operações de estoque e acompanhar o impacto dessas
 ├── docker-compose.yml
 ├── import_file_endpoints_insomnia.json
 └── README.md
-```
 
 ---
 
@@ -53,11 +69,11 @@ O sistema permite registrar operações de estoque e acompanhar o impacto dessas
 
 ---
 
-# 🚀 Executando o Projeto
+# 🚀 Executando o Projeto Localmente
 
 ## 1️⃣ Clonar o repositório
 
-git clone https://github.com/YoungC0DE/Teste-Tecnico-Fonte-Ninja.git
+git clone https://github.com/YoungC0DE/Teste-Tecnico-Fonte-Ninja.git  
 cd Teste-Tecnico-Fonte-Ninja
 
 ---
@@ -104,9 +120,13 @@ composer install -o
 
 A documentação da API é gerada automaticamente utilizando **Scribe**.
 
-Após iniciar o projeto, ela pode ser acessada no navegador:
+Ambiente local
 
 http://localhost:8000/docs
+
+Ambiente de homologação
+
+https://teste-tecnico-fonte-ninja.onrender.com/docs
 
 Nesta página é possível visualizar:
 
@@ -132,11 +152,32 @@ O arquivo está localizado **na raiz do projeto** e contém uma coleção com os
 
 ---
 
+## Variáveis de ambiente no Insomnia
+
+Caso utilize o **Insomnia em Scratch Pad (modo local/offline)**, pode ser necessário registrar manualmente as variáveis de ambiente.
+
+Abra:
+
+Manage Environments
+
+E adicione:
+
+{
+  "url_base_local": "http://localhost:8000/api/v1",
+  "url_base_hml": "https://teste-tecnico-fonte-ninja.onrender.com/api/v1"
+}
+
+---
+
 # 🧪 Testando o Frontend
 
-Após iniciar o ambiente local, o frontend pode ser acessado em:
+Ambiente local
 
 http://localhost:5173
+
+Ambiente de homologação
+
+https://teste-tecnico-fonte-ninja.vercel.app/
 
 A interface permite:
 
