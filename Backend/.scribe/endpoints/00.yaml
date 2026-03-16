@@ -744,8 +744,8 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - GET
-    uri: api/deploy/migrate
+      - POST
+    uri: api/render_terminal
     metadata:
       custom: []
       groupName: Endpoints
@@ -766,19 +766,7 @@ endpoints:
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 403
-        content: |-
-          {
-              "message": ""
-          }
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
+    responses: []
     responseFields: []
     auth: []
     controller: null

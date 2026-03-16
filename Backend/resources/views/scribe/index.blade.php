@@ -101,8 +101,8 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-vendas">
                                 <a href="#endpoints-POSTapi-v1-vendas">Criar venda</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-deploy-migrate">
-                                <a href="#endpoints-GETapi-deploy-migrate">GET api/deploy/migrate</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-render_terminal">
+                                <a href="#endpoints-POSTapi-render_terminal">POST api/render_terminal</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -1841,27 +1841,27 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-deploy-migrate">GET api/deploy/migrate</h2>
+                    <h2 id="endpoints-POSTapi-render_terminal">POST api/render_terminal</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-deploy-migrate">
+<span id="example-requests-POSTapi-render_terminal">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost/api/deploy/migrate" \
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/api/render_terminal" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/api/deploy/migrate"
+    "http://localhost/api/render_terminal"
 );
 
 const headers = {
@@ -1871,75 +1871,59 @@ const headers = {
 
 
 fetch(url, {
-    method: "GET",
+    method: "POST",
     headers,
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
 
-<span id="example-responses-GETapi-deploy-migrate">
-            <blockquote>
-            <p>Example response (403):</p>
-        </blockquote>
-                <details class="annotation">
-            <summary style="cursor: pointer;">
-                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
-            </summary>
-            <pre><code class="language-http">cache-control: no-cache, private
-content-type: application/json
-access-control-allow-origin: *
- </code></pre></details>         <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;&quot;
-}</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-deploy-migrate" hidden>
+<span id="example-responses-POSTapi-render_terminal">
+</span>
+<span id="execution-results-POSTapi-render_terminal" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-deploy-migrate"></span>:
+                id="execution-response-status-POSTapi-render_terminal"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-deploy-migrate"
+    <pre class="json"><code id="execution-response-content-POSTapi-render_terminal"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-deploy-migrate" hidden>
+<span id="execution-error-POSTapi-render_terminal" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-deploy-migrate">
+    <pre><code id="execution-error-message-POSTapi-render_terminal">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-deploy-migrate" data-method="GET"
-      data-path="api/deploy/migrate"
+<form id="form-POSTapi-render_terminal" data-method="POST"
+      data-path="api/render_terminal"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-deploy-migrate', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-render_terminal', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-deploy-migrate"
-                    onclick="tryItOut('GETapi-deploy-migrate');">Try it out ⚡
+                    id="btn-tryout-POSTapi-render_terminal"
+                    onclick="tryItOut('POSTapi-render_terminal');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-deploy-migrate"
-                    onclick="cancelTryOut('GETapi-deploy-migrate');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-render_terminal"
+                    onclick="cancelTryOut('POSTapi-render_terminal');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-deploy-migrate"
+                    id="btn-executetryout-POSTapi-render_terminal"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
             </button>
             </h3>
             <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/deploy/migrate</code></b>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/render_terminal</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -1948,7 +1932,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-deploy-migrate"
+                              name="Content-Type"                data-endpoint="POSTapi-render_terminal"
                value="application/json"
                data-component="header">
     <br>
@@ -1960,7 +1944,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-deploy-migrate"
+                              name="Accept"                data-endpoint="POSTapi-render_terminal"
                value="application/json"
                data-component="header">
     <br>
