@@ -3,6 +3,7 @@
 use App\Http\Controllers\V1\ProductController;
 use App\Http\Controllers\V1\PurchaseController;
 use App\Http\Controllers\V1\SaleController;
+use Illuminate\Support\Facades\Artisan;
 
 Route::prefix('v1')->group(function () {
     Route::get('/ping', fn() => 'pong');
@@ -24,4 +25,17 @@ Route::prefix('v1')->group(function () {
         Route::get('/', [SaleController::class, 'index']);
         Route::post('/', [SaleController::class, 'store']);
     });
+});
+
+// triggers to render
+Route::get('/deploy/migrate', function () {
+    abort_unless(
+        request()->header('X_DEPLOY_TOKEN') === env('X_DEPLOY_TOKEN'),
+        403
+    );
+
+    Artisan::call('migrate', ['--force' => true]);
+    return response()->json([
+        'output' => Artisan::output()
+    ]);
 });
