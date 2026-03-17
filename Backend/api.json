@@ -1,0 +1,771 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "EstoqueNinja",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/api"
+        }
+    ],
+    "paths": {
+        "/v1/ping": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string",
+                                    "const": "pong"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/produtos": {
+            "get": {
+                "operationId": "product.index",
+                "description": "Retorna uma lista de produtos cadastrados.\n\nQuando `pagination=false`, retorna uma lista simples (m\u00e1ximo 20 produtos) sem pagina\u00e7\u00e3o.\nQuando n\u00e3o enviado ou `pagination=true`, retorna dados paginados (padr\u00e3o: 15 por p\u00e1gina).\n\n\u00c9 poss\u00edvel realizar uma busca utilizando o par\u00e2metro `search`,\nque ser\u00e1 aplicado no campo `nome`.\n\nExemplo:\n- /products (paginado)\n- /products?pagination=false (sem pagina\u00e7\u00e3o, m\u00e1x 20)\n- /products?search=notebook\n- /products?search=notebook&pagination=false",
+                "summary": "Listar produtos",
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "data"
+                                            ]
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "product.store",
+                "description": "Cria um novo produto no sistema.\n\nRegras:\n- `nome` \u00e9 obrigat\u00f3rio e deve ter ao menos 3 caracteres\n- `preco_venda` \u00e9 obrigat\u00f3rio e deve ser maior que zero\n- O estoque inicial \u00e9 definido como 0\n- O custo m\u00e9dio \u00e9 iniciado como 0",
+                "summary": "Criar produto",
+                "tags": [
+                    "Product"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "const": "Erro ao criar produto"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/v1/produtos/{productId}": {
+            "get": {
+                "operationId": "product.show",
+                "description": "Retorna os detalhes de um produto espec\u00edfico com base no seu ID.\n\nCaso o produto n\u00e3o seja encontrado, ser\u00e1 retornado erro 404.",
+                "summary": "Exibir produto",
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "const": "Product not found"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "product.update",
+                "description": "Atualiza os dados de um produto existente.\n\nOs campos que podem ser atualizados s\u00e3o:\n- `nome`\n- `preco_venda`\n\nCaso o produto n\u00e3o seja encontrado, ser\u00e1 retornado erro 404.",
+                "summary": "Atualizar produto",
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nome": {
+                                        "type": "string"
+                                    },
+                                    "preco_venda": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "const": "Product not found"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "product.destroy",
+                "description": "Remove um produto do sistema com base no seu ID.\n\nCaso o produto n\u00e3o exista, ser\u00e1 retornado erro 404.",
+                "summary": "Remover produto",
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "additionalItems": false
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "const": "Product not found"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/compras": {
+            "get": {
+                "operationId": "purchase.index",
+                "description": "Retorna uma lista paginada de compras registradas no sistema.\n\nCada compra inclui seus itens e os respectivos produtos\natrav\u00e9s do relacionamento `items.product`.\n\n\u00c9 poss\u00edvel realizar uma busca utilizando o par\u00e2metro `search`,\nque ser\u00e1 aplicado nos campos:\n- `id` da compra\n- `total_value` da compra\n\nExemplos:\n- /purchases\n- /purchases?search=1\n- /purchases?search=250",
+                "summary": "Listar compras",
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LengthAwarePaginator"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "purchase.store",
+                "description": "Registra uma nova compra no sistema e seus respectivos itens.\n\nPara cada item informado:\n- O produto \u00e9 validado pelo `product_id`\n- \u00c9 criado um registro em `purchase_items`\n- O estoque do produto \u00e9 atualizado\n- O custo m\u00e9dio do produto \u00e9 recalculado\n\nO custo m\u00e9dio \u00e9 calculado utilizando a f\u00f3rmula:\n\nnovo_custo_medio =\n((estoque_atual * custo_medio_atual) + (quantidade_compra * custo_unitario))\n/ novo_estoque\n\nTodo o processo ocorre dentro de uma **transa\u00e7\u00e3o de banco de dados**,\ngarantindo consist\u00eancia das informa\u00e7\u00f5es caso ocorra algum erro.\n\nCaso algum produto informado n\u00e3o exista, a opera\u00e7\u00e3o ser\u00e1 cancelada.\n\nAo final da opera\u00e7\u00e3o:\n- O valor total da compra \u00e9 calculado automaticamente\n- A compra \u00e9 retornada com seus itens e produtos relacionados",
+                "summary": "Criar compra",
+                "tags": [
+                    "Purchase"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePurchaseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/v1/vendas": {
+            "get": {
+                "operationId": "sale.index",
+                "description": "Retorna uma lista paginada de vendas registradas no sistema.\n\nCada venda inclui seus itens e os respectivos produtos\natrav\u00e9s do relacionamento `items.product`.\n\n\u00c9 poss\u00edvel realizar uma busca utilizando o par\u00e2metro `search`,\nque ser\u00e1 aplicado nos campos:\n- `id` da venda\n- `total_value` da venda\n\nExemplos:\n- /sales\n- /sales?search=1\n- /sales?search=500",
+                "summary": "Listar vendas",
+                "tags": [
+                    "Sale"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LengthAwarePaginator"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "sale.store",
+                "description": "Registra uma nova venda no sistema e seus respectivos itens.\n\nPara cada item informado:\n- O produto \u00e9 validado pelo `product_id`\n- \u00c9 verificado se existe estoque suficiente\n- O item da venda \u00e9 registrado\n- O estoque do produto \u00e9 decrementado\n- O lucro do item \u00e9 calculado\n\nO lucro \u00e9 calculado utilizando a f\u00f3rmula:\n\nlucro = (preco_venda - custo_medio_produto) * quantidade\n\nO custo m\u00e9dio utilizado \u00e9 o `average_cost` armazenado no produto,\nque representa o custo m\u00e9dio ponderado baseado nas compras anteriores.\n\nTodo o processo ocorre dentro de uma **transa\u00e7\u00e3o de banco de dados**\npara garantir consist\u00eancia caso ocorra algum erro durante a opera\u00e7\u00e3o.\n\nCaso:\n- O produto n\u00e3o exista\n- Ou o estoque seja insuficiente\n\nA opera\u00e7\u00e3o ser\u00e1 cancelada e nenhuma altera\u00e7\u00e3o ser\u00e1 persistida.\n\nAo final da opera\u00e7\u00e3o:\n- O valor total da venda \u00e9 calculado automaticamente\n- A venda \u00e9 retornada com seus itens e produtos relacionados",
+                "summary": "Criar venda",
+                "tags": [
+                    "Sale"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreSaleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "sale": {
+                                            "$ref": "#/components/schemas/Sale"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "profit": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "sale",
+                                        "total",
+                                        "profit"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LengthAwarePaginator": {
+                "type": "object",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "string"
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "next_page_url": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "to": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "current_page",
+                    "data",
+                    "first_page_url",
+                    "from",
+                    "last_page",
+                    "last_page_url",
+                    "links",
+                    "next_page_url",
+                    "path",
+                    "per_page",
+                    "prev_page_url",
+                    "to",
+                    "total"
+                ],
+                "title": "LengthAwarePaginator"
+            },
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "estoque": {
+                        "type": "integer"
+                    },
+                    "custo_medio": {
+                        "type": "string"
+                    },
+                    "preco_venda": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "nome",
+                    "estoque",
+                    "custo_medio",
+                    "preco_venda",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "Product"
+            },
+            "Sale": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "valor_total": {
+                        "type": "string"
+                    },
+                    "cliente": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "valor_total",
+                    "cliente",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "Sale"
+            },
+            "StoreProductRequest": {
+                "type": "object",
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 255
+                    },
+                    "preco_venda": {
+                        "type": "number",
+                        "minimum": 0.01
+                    }
+                },
+                "required": [
+                    "nome",
+                    "preco_venda"
+                ],
+                "title": "StoreProductRequest"
+            },
+            "StorePurchaseRequest": {
+                "type": "object",
+                "properties": {
+                    "fornecedor": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "produtos": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "quantidade": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "preco_unitario": {
+                                    "type": "number",
+                                    "minimum": 0.01
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "quantidade",
+                                "preco_unitario"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "fornecedor",
+                    "produtos"
+                ],
+                "title": "StorePurchaseRequest"
+            },
+            "StoreSaleRequest": {
+                "type": "object",
+                "properties": {
+                    "cliente": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "produtos": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "quantidade": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "preco_unitario": {
+                                    "type": "number",
+                                    "minimum": 0.01
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "quantidade",
+                                "preco_unitario"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "cliente",
+                    "produtos"
+                ],
+                "title": "StoreSaleRequest"
+            }
+        },
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
