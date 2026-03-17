@@ -20,7 +20,7 @@ O projeto também está disponível online para testes.
 https://erp-estoque-chi.vercel.app/
 
 **API**  
-https://erp_estoque.onrender.com
+https://erp-estoque.onrender.com
 
 **Documentação da API**  
 https://erp-estoque.onrender.com/docs/api
