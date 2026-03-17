@@ -1,31 +1,36 @@
 # ERP Estoque
 
+<p align="center">
+<img src="https://skillicons.dev/icons?i=php,laravel,vue,postgres,redis,docker,git&perline=7" />
+</p>
+
 Projeto **fullstack** para gerenciamento de **produtos, compras e vendas**, composto por **Backend (API REST)** e **Frontend**, orquestrados com **Docker**.
 
-O sistema permite registrar operações de estoque e acompanhar o impacto dessas movimentações no **custo médio, estoque disponível e lucro obtido nas vendas**.
+O sistema permite registrar movimentações de estoque e acompanhar automaticamente o impacto dessas operações no **custo médio dos produtos, estoque disponível e lucro obtido nas vendas**.
 
-> ⚠️ Este projeto foi desenvolvido e testado em ambiente **WSL (Windows Subsystem for Linux)** utilizando **Ubuntu no Windows**.
+⚠️ Este projeto foi desenvolvido e testado em ambiente **WSL (Windows Subsystem for Linux)** utilizando **Ubuntu no Windows**.
 
 ---
 
-# 🌐 Acesso ao Projeto (Ambiente de Homologação)
+## 🌐 Acesso ao Projeto (Homologação)
 
-O projeto também está disponível online para testes:
+O projeto também está disponível online para testes.
 
-Frontend  
+**Frontend**  
 https://erp-estoque-chi.vercel.app/
 
-API  
+**API**  
 https://erp_estoque.onrender.com
 
-Documentação da API  
+**Documentação da API**  
 https://erp-estoque.onrender.com/docs/api
 
-> ⚠️ O primeiro acesso à API pode levar alguns segundos, pois o Render hiberna serviços gratuitos após período de inatividade.
+⚠️ O primeiro acesso à API pode levar alguns segundos, pois o **Render hiberna serviços gratuitos após período de inatividade**.
 
 ---
 
-# 📦 Estrutura do Projeto
+## 📦 Estrutura do Projeto
+
 ```
 .
 ├── Backend
@@ -45,132 +50,147 @@ https://erp-estoque.onrender.com/docs/api
 ├── import_file_endpoints_insomnia.json
 └── README.md
 ```
+
 ---
 
-# 🛠 Tecnologias Utilizadas
+## 🛠 Tecnologias
 
-## Backend
-
+### Backend
 - Laravel 12
 - PHP 8.4
 - PostgreSQL
 - Redis
 
-## Frontend
-
+### Frontend
 - Vue 3
 - PrimeVue
 
-## Ferramentas
-
+### Ferramentas
 - Docker
 - Docker Compose
 - Insomnia / Postman
 
 ---
 
-# 🚀 Executando o Projeto Localmente
+## 🚀 Executando localmente
 
-## 1️⃣ Clonar o repositório
+### 1. Clonar o repositório
 
+```
 git clone https://github.com/YoungC0DE/ERP_Estoque.git
 cd ERP_Estoque
+```
 
 ---
 
-## 2️⃣ Criar os arquivos de ambiente
+### 2. Criar arquivos de ambiente
 
-Tanto o **Frontend** quanto o **Backend** possuem arquivos `.env`.
+Tanto o **Frontend** quanto o **Backend** utilizam arquivos `.env`.
 
 Crie os arquivos a partir dos exemplos fornecidos:
 
-Backend/.env.example  → Backend/.env  
+```
+Backend/.env.example  → Backend/.env
 Frontend/.env.example → Frontend/.env
+```
 
 ---
 
-## 3️⃣ Subir os containers
+### 3. Subir os containers
 
-Na pasta **raiz do projeto**, execute:
+Na **raiz do projeto**, execute:
 
+```
 docker compose up -d
+```
 
-Esse comando irá iniciar todos os serviços necessários:
+Esse comando iniciará todos os serviços necessários:
 
 - API Laravel
-- Banco PostgreSQL
+- PostgreSQL
 - Redis
 - Frontend
 
 ---
 
-## 4️⃣ Instalar dependências do Backend
+### 4. Instalar dependências do Backend
 
-Após subir os containers, acesse o container da API:
+Acesse o container da API:
 
+```
 docker compose exec api bash
+```
 
-Dentro do container, execute:
+Dentro do container execute:
+
 ```
 composer install -o
 ```
 
 ---
 
-# 📚 Documentação da API
+## 📚 Documentação da API
 
 A documentação da API é gerada automaticamente utilizando **Scramble**.
 
-Ambiente local
+Ambiente local:
 
+```
 http://localhost:8000/docs
+```
 
 Nesta página é possível visualizar:
 
-- Lista de todos os endpoints
+- Lista de endpoints
 - Parâmetros de requisição
 - Exemplos de payload
-- Exemplos de respostas da API
+- Exemplos de resposta da API
 
-A documentação é gerada diretamente a partir dos **Controllers** e **Requests**, garantindo que esteja sempre sincronizada com o código da aplicação.
+A documentação é gerada diretamente a partir dos **Controllers e Requests**, garantindo que esteja sempre sincronizada com o código da aplicação.
 
 ---
 
-# 🔎 Testando a API
+## 🔎 Testando a API
 
 Para testar os endpoints manualmente:
 
 1. Abra o **Insomnia** ou **Postman**
 2. Importe o arquivo:
 
+```
 import_file_endpoints_insomnia.json
+```
 
-O arquivo está localizado **na raiz do projeto** e contém uma coleção com os endpoints disponíveis na API.
+O arquivo está localizado **na raiz do projeto** e contém uma coleção com todos os endpoints disponíveis na API.
 
----
+### Variáveis de ambiente no Insomnia
 
-## Variáveis de ambiente no Insomnia
-
-Caso utilize o **Insomnia em Scratch Pad (modo local/offline)**, pode ser necessário registrar manualmente as variáveis de ambiente.
+Caso utilize o **Insomnia em Scratch Pad (modo local/offline)**, pode ser necessário configurar manualmente as variáveis de ambiente.
 
 Abra:
 
+```
 Manage Environments
+```
 
 E adicione:
+
 ```
 {
   "url_base_local": "http://localhost:8000/api/v1",
   "url_base_hml": "https://erp_estoque.onrender.com/api/v1"
 }
 ```
+
 ---
 
-# 🧪 Testando o Frontend
+## 🧪 Testando o Frontend
 
-Ambiente local
+Ambiente local:
 
+```
 http://localhost:5173
+```
 
 A interface permite:
 
@@ -181,7 +201,7 @@ A interface permite:
 
 ---
 
-# ⚙️ Funcionalidades da API
+## ⚙️ Funcionalidades da API
 
 A API fornece endpoints para:
 
@@ -189,42 +209,37 @@ A API fornece endpoints para:
 - Registro de compras
 - Registro de vendas
 - Controle de estoque
-- Cálculo automático de custo médio
-- Cálculo de lucro nas vendas
+- Cálculo automático de **custo médio**
+- Cálculo de **lucro nas vendas**
 
----
-
-# 🧩 Estrutura da API
-
-A API segue o padrão **REST** e possui:
+A API segue o padrão **REST**, com **versionamento de rotas (`/api/v1`)**, utilizando:
 
 - Controllers
 - Requests para validação
 - Models
-- Versionamento de rotas (`/api/v1`)
 
 ---
 
-# 🎨 Interface do Frontend
+## 🎨 Interface do Frontend
 
 O layout do frontend foi **inspirado no template Sakai**, disponibilizado pelo **PrimeVue**, adaptado para atender às necessidades deste projeto.
 
-O objetivo foi manter uma interface **simples, limpa e focada em produtividade**, comum em sistemas administrativos e ERPs.
+A proposta foi manter uma interface **simples, limpa e focada em produtividade**, padrão comum em sistemas administrativos e ERPs.
 
 ---
 
-# 🤖 Uso de Inteligência Artificial no desenvolvimento
+## 🤖 Uso de Inteligência Artificial
 
-Durante o desenvolvimento do projeto foram utilizadas ferramentas de apoio baseadas em **Inteligência Artificial**, incluindo:
+Durante o desenvolvimento foram utilizadas ferramentas baseadas em **Inteligência Artificial** como suporte de produtividade:
 
 - GitHub Copilot
 - ChatGPT
 - Cursor
 
-Essas ferramentas foram utilizadas como **suporte para produtividade, revisão de código e esclarecimento de dúvidas técnicas**, sem geração automática integral do projeto.
+Essas ferramentas foram utilizadas para **revisão de código, auxílio técnico e produtividade**, sem geração automática integral do projeto.
 
 ---
 
-# 📄 Licença
+## 📄 Licença
 
 Projeto desenvolvido para **fins educacionais e avaliação técnica**.
