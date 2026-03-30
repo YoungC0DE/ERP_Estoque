@@ -1,28 +1,17 @@
 <?php
 
-use App\Http\Controllers\V1\ProductController;
-use App\Http\Controllers\V1\PurchaseController;
-use App\Http\Controllers\V1\SaleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\AuthController;
 
 Route::prefix('v1')->group(function () {
-    Route::get('/ping', fn() => 'pong');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('login.rate-limit');
+    Route::post('/register', [AuthController::class, 'register']);
 
-    Route::prefix('produtos')->group(function () {
-        Route::get('/', [ProductController::class, 'index']);
-        Route::post('/', [ProductController::class, 'store']);
-        Route::get('/{productId}', [ProductController::class, 'show']);
-        Route::put('/{productId}', [ProductController::class, 'update']);
-        Route::delete('/{productId}', [ProductController::class, 'destroy']);
-    });
+    Route::middleware('auth:sanctum')->group(function () {
+        require('modules/products.php');
+        require('modules/sales.php');
+        require('modules/purchases.php');
 
-    Route::prefix('compras')->group(function () {
-        Route::get('/', [PurchaseController::class, 'index']);
-        Route::post('/', [PurchaseController::class, 'store']);
-    });
-
-    Route::prefix('vendas')->group(function () {
-        Route::get('/', [SaleController::class, 'index']);
-        Route::post('/', [SaleController::class, 'store']);
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
 });

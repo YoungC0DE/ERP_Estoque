@@ -25,8 +25,29 @@
   gap: 10px;
   border-radius: 6px;
   border: 1px solid;
-  padding: 5px;
+  padding: 8px;
   font-size: 10pt;
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .notification-title {

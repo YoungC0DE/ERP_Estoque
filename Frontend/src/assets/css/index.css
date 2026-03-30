@@ -2,6 +2,7 @@
 
 @import './global.css';
 @import './layout.css';
+@import './authLayout.css';
 @import './menu.css';
 @import './responsive.css';
 @import './primevue.css';

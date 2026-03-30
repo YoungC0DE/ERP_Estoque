@@ -2,7 +2,7 @@ import {
   PRODUCTS_ROUTER,
   PURCHASES_ROUTER,
   SALES_ROUTER,
-} from "../router/index.js";
+} from "@/utils/constants.js";
 
 const routerMenus = [
   {

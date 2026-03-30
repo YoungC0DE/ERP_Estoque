@@ -140,7 +140,10 @@ export const isFormValid = (errors) => {
  * e as exibe como lista de toasts
  */
 export const handleApiErrors = (errorResponse, toastService) => {
-  if (!errorResponse.response || !errorResponse.response.data) {
+  if (
+    !errorResponse.response || 
+    !errorResponse.response.data
+  ) {
     toastService.error('Erro ao enviar dados');
     return;
   }
@@ -162,9 +165,73 @@ export const handleApiErrors = (errorResponse, toastService) => {
         toastService.error(messages);
       }
     });
-  } else if (data.message) {
-    toastService.error(data.message);
   } else {
-    toastService.error('Erro ao enviar dados');
+    toastService.error((data.message || data.error) || 'Erro ao enviar dados');
   }
+};
+
+/**
+ * Valida os campos de login
+ */
+export const validateLogin = (credentials) => {
+  const errors = {};
+
+  // Email: required, email, max:255
+  if (!credentials.email || credentials.email.trim() === '') {
+    errors.email = 'O e-mail é obrigatório';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
+    errors.email = 'Informe um e-mail válido';
+  } else if (credentials.email.length > 255) {
+    errors.email = 'O e-mail deve ter no máximo 255 caracteres';
+  }
+
+  // Password: required, string, min:6
+  if (!credentials.password) {
+    errors.password = 'A senha é obrigatória';
+  } else if (credentials.password.length < 6) {
+    errors.password = 'A senha deve ter no mínimo 6 caracteres';
+  }
+
+  return errors;
+};
+
+/**
+ * Valida os campos de registro/cadastro
+ */
+export const validateRegister = (user) => {
+  const errors = {};
+
+  // Nome: required, string, min:3, max:255
+  if (!user.name || user.name.trim() === '') {
+    errors.name = 'O nome é obrigatório';
+  } else if (user.name.length < 3) {
+    errors.name = 'O nome deve ter no mínimo 3 caracteres';
+  } else if (user.name.length > 255) {
+    errors.name = 'O nome deve ter no máximo 255 caracteres';
+  }
+
+  // Email: required, email, max:255
+  if (!user.email || user.email.trim() === '') {
+    errors.email = 'O e-mail é obrigatório';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+    errors.email = 'Informe um e-mail válido';
+  } else if (user.email.length > 255) {
+    errors.email = 'O e-mail deve ter no máximo 255 caracteres';
+  }
+
+  // Password: required, string, min:6
+  if (!user.password) {
+    errors.password = 'A senha é obrigatória';
+  } else if (user.password.length < 6) {
+    errors.password = 'A senha deve ter no mínimo 6 caracteres';
+  }
+
+  // Password confirmation: required, same:password
+  if (!user.password_confirmation) {
+    errors.password_confirmation = 'A confirmação de senha é obrigatória';
+  } else if (user.password !== user.password_confirmation) {
+    errors.password_confirmation = 'As senhas não conferem';
+  }
+
+  return errors;
 };

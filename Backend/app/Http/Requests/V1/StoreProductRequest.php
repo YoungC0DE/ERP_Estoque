@@ -2,17 +2,10 @@
 
 namespace App\Http\Requests\V1;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\BaseRequest;
 
-class StoreProductRequest extends FormRequest
+class StoreProductRequest extends BaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     public function rules(): array
     {
@@ -33,14 +26,5 @@ class StoreProductRequest extends FormRequest
             'preco_venda.numeric' => 'O preço deve ser um número',
             'preco_venda.min' => 'O preço deve ser no mínimo R$ 0,01',
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            response()->json([
-                'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST)
-        );
     }
 }

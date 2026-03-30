@@ -48,11 +48,12 @@ class ProductController extends Controller
             // Com paginação (comportamento original)
             $page = (int) $request->input('page', 1);
             $perPage = (int) $request->input('per_page', 15);
+            $userId = auth()->id();
 
-            $cacheKey = "produtos:page:{$page}:per_page:{$perPage}:search:{$search}";
+            $cacheKey = "produtos:user:{$userId}:page:{$page}:per_page:{$perPage}:search:{$search}";
 
-            $products = Cache::remember($cacheKey, 60, function () use ($search, $perPage) {
-                $query = Product::query();
+            $products = Cache::remember($cacheKey, 60, function () use ($search, $perPage, $userId) {
+                $query = Product::where('user_id', $userId);
 
                 if ($search !== '') {
                     $query->whereLike('nome', "%{$search}%");
@@ -77,10 +78,11 @@ class ProductController extends Controller
             return $this->jsonResponse($products);
         }
 
-        $cacheKey = "produtos:sem_paginacao:search:{$search}";
+        $userId = auth()->id();
+        $cacheKey = "produtos:user:{$userId}:sem_paginacao:search:{$search}";
 
-        $products = Cache::remember($cacheKey, 60, function () use ($search) {
-            $query = Product::query();
+        $products = Cache::remember($cacheKey, 60, function () use ($search, $userId) {
+            $query = Product::where('user_id', $userId);
 
             if ($search !== '') {
                 $query->whereLike('nome', "%{$search}%");
@@ -125,6 +127,7 @@ class ProductController extends Controller
     {
         try {
             $product = Product::create([
+                'user_id' => auth()->id(),
                 'nome' => $request->input('nome'),
                 'estoque' => 0,
                 'custo_medio' => 0,
@@ -156,8 +159,9 @@ class ProductController extends Controller
      */
     public function show(string $productId): JsonResponse
     {
-        $product = Cache::remember("produto:{$productId}", 60, function () use ($productId) {
-            return Product::find($productId);
+        $userId = auth()->id();
+        $product = Cache::remember("produto:user:{$userId}:{$productId}", 60, function () use ($productId, $userId) {
+            return Product::where('user_id', $userId)->find($productId);
         });
 
         if (empty($product)) {
@@ -190,7 +194,7 @@ class ProductController extends Controller
      */
     public function update(string $productId, Request $request): JsonResponse
     {
-        $product = Product::find($productId);
+        $product = Product::where('user_id', auth()->id())->find($productId);
 
         if (empty($product)) {
             return $this->errorResponse("Product not found", Response::HTTP_NOT_FOUND);
@@ -222,7 +226,7 @@ class ProductController extends Controller
      */
     public function destroy(string $productId): JsonResponse
     {
-        $product = Product::find($productId);
+        $product = Product::where('user_id', auth()->id())->find($productId);
 
         if (empty($product)) {
             return $this->errorResponse("Product not found", Response::HTTP_NOT_FOUND);

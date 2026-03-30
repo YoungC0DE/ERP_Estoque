@@ -68,7 +68,7 @@ const loadProducts = async (searchQuery = "", pagination = true) => {
     const items = response.data.data ?? response.data;
     products.value = items.map((p) => ({ label: p.nome, value: p.id }));
   } catch (error) {
-    Toast.error("Erro ao carregar produtos");
+    handleApiErrors(error, Toast);
   }
 };
 
@@ -85,7 +85,7 @@ const loadPurchases = async () => {
     const response = await ApiService.get(PURCHASES_ENDPOINT);
     purchases.value = response.data.data ?? response.data;
   } catch (error) {
-    Toast.error("Erro ao carregar compras");
+    handleApiErrors(error, Toast);
   }
 };
 

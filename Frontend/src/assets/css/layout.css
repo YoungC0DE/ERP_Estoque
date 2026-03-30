@@ -40,6 +40,19 @@
 .layout-topbar-actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+}
+
+.notification-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notification-badge {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
 }
 
 /* ÁREA PRINCIPAL (SIDEBAR + CONTEÚDO) */

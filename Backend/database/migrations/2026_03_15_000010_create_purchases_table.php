@@ -14,11 +14,13 @@ return new class extends Migration
     {
         Schema::create(Purchase::TABLE, function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->decimal('valor_total', 12, 2)->default(0);
             $table->string('fornecedor')->nullable();
             $table->timestamps();
 
             // Índices
+            $table->index('user_id');
             $table->index('fornecedor');
             $table->index('valor_total');
         });

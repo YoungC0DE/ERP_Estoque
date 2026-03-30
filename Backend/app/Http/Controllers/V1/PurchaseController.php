@@ -44,12 +44,17 @@ class PurchaseController extends Controller
     {
         if ($request->has('search')) {
             $search = trim(strtolower($request->input('search')));
-            $purchases = Purchase::whereLike('id', "%$search%")
-                ->orWhereLike('valor_total', "%$search%")
+            $purchases = Purchase::where('user_id', auth()->id())
+                ->where(function ($query) use ($search) {
+                    $query->whereLike('id', "%$search%")
+                        ->orWhereLike('valor_total', "%$search%");
+                })
                 ->with('items.product')
                 ->paginate();
         } else {
-            $purchases = Purchase::with('items.product')->paginate();
+            $purchases = Purchase::where('user_id', auth()->id())
+                ->with('items.product')
+                ->paginate();
         }
 
         // Adaptar saída para os campos esperados pelo frontend
@@ -111,13 +116,14 @@ class PurchaseController extends Controller
 
         try {
             $purchase = Purchase::create([
+                'user_id' => auth()->id(),
                 'valor_total' => 0,
                 'fornecedor' => $request->input('fornecedor'),
             ]);
 
             $total = 0;
             foreach ($request->input('produtos', []) as $item) {
-                $product = Product::find($item['id']);
+                $product = Product::where('user_id', auth()->id())->find($item['id']);
 
                 if (empty($product)) {
                     throw new \Exception("Produto com ID {$item['id']} não encontrado.");

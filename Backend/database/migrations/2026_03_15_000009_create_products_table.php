@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create(Product::TABLE, function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('nome'); // nome do produto
             $table->unsignedInteger('estoque')->default(0); // quantidade atual
             $table->decimal('custo_medio', 10, 2)->default(0); // custo médio do produto
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Índices
+            $table->index('user_id');
             $table->index('nome');
             $table->index('preco_venda');
         });
